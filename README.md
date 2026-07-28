@@ -323,10 +323,10 @@ Same as desktop — all commands listed in the [OSC reference](#osc-command-refe
 
 ## Linux kiosk machine setup
 
-For a dedicated Debian/Ubuntu kiosk machine that boots straight into the browser, use the legacy installer script (installs Chromium + Python-based service):
+For a dedicated Debian/Ubuntu kiosk machine that boots straight into the browser, use the legacy installer script (installs Chromium + Python-based service). All installer scripts, systemd units, and a sample config now live in [`Debian-installer/`](Debian-installer/) — see [INSTALL.md](INSTALL.md) for full instructions.
 
 ```bash
-sudo bash scripts/setup-kioscbrowsr.sh
+sudo bash Debian-installer/setup-kioscbrowsr.sh
 ```
 
 For the new Electron-based service on Linux, install the `.deb` from Releases and enable it as a systemd service:
