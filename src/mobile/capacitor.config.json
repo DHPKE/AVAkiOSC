@@ -1,6 +1,6 @@
 {
-  "appId": "com.dhpke.kioscbrowsr",
-  "appName": "KiOSC-BrowsR",
+  "appId": "com.dhpke.avakiosc",
+  "appName": "AVAkiOSC",
   "webDir": "dist",
   "server": {
     "allowNavigation": ["*"]

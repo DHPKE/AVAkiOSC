@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# setup-kioscbrowsr.sh
-# Run as root on Debian 12/13 (or Debian-derived) to install KiOSC-BrowsR.
-# Usage: sudo ./setup-kioscbrowsr.sh
+# setup-avakiosc.sh
+# Run as root on Debian 12/13 (or Debian-derived) to install AVAkiOSC.
+# Usage: sudo ./setup-avakiosc.sh
 set -euo pipefail
 
 # Configurable defaults (can be overridden via env or edited after install)
@@ -15,13 +15,13 @@ WEBADMIN_PORT="${WEBADMIN_PORT:-8080}"
 WEBADMIN_USER="${WEBADMIN_USER:-admin}"
 WEBADMIN_PASS="${WEBADMIN_PASS:-changeme}"
 CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-VENV_DIR="/opt/kiosc-browsr/venv"
+VENV_DIR="/opt/avakiosc/venv"
 SERVICE_USER="${KIOSK_USER}"
-CONFIG_FILE="/etc/kiosc-browsr/config.yaml"
+CONFIG_FILE="/etc/avakiosc/config.yaml"
 
-echo "KiOSC-BrowsR installer"
+echo "AVAkiOSC installer"
 echo "This will create a kiosk user '${KIOSK_USER}', install Chromium (or Chrome fallback),"
-echo "and deploy the KiOSC-BrowsR services (OSC, UDP text, WebAdmin)."
+echo "and deploy the AVAkiOSC services (OSC, UDP text, WebAdmin)."
 read -rp "Continue? [y/N] " answer
 if [[ "${answer,,}" != "y" ]]; then
   echo "Aborted."
@@ -56,31 +56,31 @@ fi
 if ! id -u "${KIOSK_USER}" >/dev/null 2>&1; then
   useradd -m -s /bin/bash -G sudo "${KIOSK_USER}"
   passwd -d "${KIOSK_USER}" || true
-  echo "${KIOSK_USER} ALL=(ALL) NOPASSWD: /bin/systemctl restart kiosc-browsr.service, /bin/systemctl restart kiosc-webadmin.service" > /etc/sudoers.d/${KIOSK_USER}-limited || true
+  echo "${KIOSK_USER} ALL=(ALL) NOPASSWD: /bin/systemctl restart avakiosc.service, /bin/systemctl restart avakiosc-webadmin.service" > /etc/sudoers.d/${KIOSK_USER}-limited || true
 fi
 
 # Create directories
-mkdir -p /opt/kiosc-browsr
-chown -R "${SERVICE_USER}:${SERVICE_USER}" /opt/kiosc-browsr
+mkdir -p /opt/avakiosc
+chown -R "${SERVICE_USER}:${SERVICE_USER}" /opt/avakiosc
 
 # Create python venv and install python deps
 python3 -m venv "${VENV_DIR}"
 "${VENV_DIR}/bin/pip" install --upgrade pip
 "${VENV_DIR}/bin/pip" install python-osc pychrome flask pyyaml websocket-client
 
-# Place application files (kiosc-browsr service and webadmin)
-install -o "${SERVICE_USER}" -m 755 -d /opt/kiosc-browsr/app
+# Place application files (avakiosc service and webadmin)
+install -o "${SERVICE_USER}" -m 755 -d /opt/avakiosc/app
 
 # Download app files from repository
-wget -O /opt/kiosc-browsr/app/kiosc_browsr.py https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/app/kiosc_browsr.py
-wget -O /opt/kiosc-browsr/app/webadmin.py https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/app/webadmin.py
+wget -O /opt/avakiosc/app/avakiosc.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/avakiosc.py
+wget -O /opt/avakiosc/app/webadmin.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/webadmin.py
 
-chmod 755 /opt/kiosc-browsr/app/kiosc_browsr.py
-chmod 755 /opt/kiosc-browsr/app/webadmin.py
-chown -R "${SERVICE_USER}:${SERVICE_USER}" /opt/kiosc-browsr
+chmod 755 /opt/avakiosc/app/avakiosc.py
+chmod 755 /opt/avakiosc/app/webadmin.py
+chown -R "${SERVICE_USER}:${SERVICE_USER}" /opt/avakiosc
 
 # Default config
-mkdir -p /etc/kiosc-browsr
+mkdir -p /etc/avakiosc
 cat > "${CONFIG_FILE}" <<YAML
 start_url: "${KIOSK_URL}"
 debug_port: 9222
@@ -97,11 +97,11 @@ chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start
 reset_time: 3600
 YAML
 
-chown -R "${SERVICE_USER}:${SERVICE_USER}" /etc/kiosc-browsr
+chown -R "${SERVICE_USER}:${SERVICE_USER}" /etc/avakiosc
 
 # Download systemd units from repository
-wget -O /etc/systemd/system/kiosc-browsr.service https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/Debian-installer/kiosc-browsr.service
-wget -O /etc/systemd/system/kiosc-webadmin.service https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/Debian-installer/kiosc-webadmin.service
+wget -O /etc/systemd/system/avakiosc.service https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/Debian-installer/avakiosc.service
+wget -O /etc/systemd/system/avakiosc-webadmin.service https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/Debian-installer/avakiosc-webadmin.service
 
 # Configure getty autologin on tty1 for kiosk user
 mkdir -p /etc/systemd/system/getty@tty1.service.d
@@ -133,7 +133,7 @@ if [ -f /home/kiosk/.Xmodmap ]; then
   xmodmap /home/kiosk/.Xmodmap
 fi
 
-# Start KiOSC-BrowsR controller runs Chromium; we still run openbox so session stays alive
+# Start AVAkiOSC controller runs Chromium; we still run openbox so session stays alive
 openbox-session
 XINIT
 chown ${KIOSK_USER}:${KIOSK_USER} /home/${KIOSK_USER}/.xinitrc
@@ -174,7 +174,7 @@ chmod 644 /home/${KIOSK_USER}/.Xmodmap
 
 # Chromium policies (managed) to lock browser UI & default URL
 mkdir -p /etc/chromium/policies/managed
-cat > /etc/chromium/policies/managed/kioscbrowsr_policies.json <<POL
+cat > /etc/chromium/policies/managed/avakiosc_policies.json <<POL
 {
   "HomepageLocation": "${KIOSK_URL}",
   "HomepageIsNewTabPage": false,
@@ -190,14 +190,14 @@ cat > /etc/chromium/policies/managed/kioscbrowsr_policies.json <<POL
 }
 POL
 mkdir -p /etc/opt/chrome/policies/managed
-cp /etc/chromium/policies/managed/kioscbrowsr_policies.json /etc/opt/chrome/policies/managed/ 2>/dev/null || true
+cp /etc/chromium/policies/managed/avakiosc_policies.json /etc/opt/chrome/policies/managed/ 2>/dev/null || true
 
 # Enable services
 systemctl daemon-reload
-systemctl enable --now kiosc-browsr.service kiosc-webadmin.service || true
+systemctl enable --now avakiosc.service avakiosc-webadmin.service || true
 systemctl restart getty@tty1.service || true
 
-echo "Installation finished. Review /etc/kiosc-browsr/config.yaml and edit values (web credentials, bind addresses, URLs)."
+echo "Installation finished. Review /etc/avakiosc/config.yaml and edit values (web credentials, bind addresses, URLs)."
 echo "Then reboot to get autologin and X running, or switch to tty1 (Ctrl+Alt+F1) to see kiosk user."
 echo "WebAdmin will be available on ${WEBADMIN_BIND}:${WEBADMIN_PORT} (if you left defaults)."
 echo "OSC is on ${OSC_BIND}:${OSC_PORT}; UDP text on ${OSC_BIND}:${UDP_TEXT_PORT}."

@@ -1,5 +1,5 @@
-appId: com.dhpke.kioscbrowsr
-productName: KiOSC-BrowsR
+appId: com.dhpke.avakiosc
+productName: AVAkiOSC
 
 directories:
   buildResources: build
@@ -20,10 +20,10 @@ linux:
     - target: AppImage
       arch: [x64, arm64]
   category: Utility
-  executableName: kiosc-browsr
+  executableName: avakiosc
   maintainer: "DHPKE <dhpke@users.noreply.github.com>"
   desktop:
-    Name: KiOSC-BrowsR
+    Name: AVAkiOSC
     Comment: OSC/UDP-controlled browser kiosk
     Categories: Utility;Network;
 

@@ -1,11 +1,11 @@
 /**
- * KiOSC-BrowsR — mobile app (Capacitor / Android / iOS)
+ * AVAkiOSC — mobile app (Capacitor / Android / iOS)
  *
  * Capabilities:
  *  - Fullscreen kiosk iframe driven by OSC/UDP commands
  *  - Listens for OSC on a configurable UDP port
  *  - Advertises itself via mDNS (_osc._udp) so controllers can find it
- *  - Browses mDNS to discover other KiOSC-BrowsR instances on the LAN
+ *  - Browses mDNS to discover other AVAkiOSC instances on the LAN
  *  - Triple-tap anywhere opens the settings/admin overlay
  *
  * Build:
@@ -25,12 +25,12 @@ import { StatusBar, Style } from '@capacitor/status-bar'
 
 // ── Persistent config (localStorage) ──────────────────────────────────────
 
-const STORAGE_KEY = 'kiosc-cfg'
+const STORAGE_KEY = 'avakiosc-cfg'
 
 const DEFAULT_CFG = {
   home_url:    'https://example.com',
   osc_port:    9000,
-  device_name: 'kiosc-mobile',
+  device_name: 'avakiosc-mobile',
   reset_time:  0          // seconds, 0 = disabled
 }
 
@@ -161,7 +161,7 @@ async function startUdp (port) {
       socketId = null
     }
 
-    const result = await UdpPlugin.create({ properties: { name: 'kiosc', bufferSize: 8192 } })
+    const result = await UdpPlugin.create({ properties: { name: 'avakiosc', bufferSize: 8192 } })
     socketId = result.socketId
 
     await UdpPlugin.bind({ socketId, address: '0.0.0.0', port })
@@ -200,9 +200,9 @@ async function startMdns () {
     await Zeroconf.register({
       domain: 'local.',
       type:   '_osc._udp',
-      name:   `KiOSC-BrowsR (${cfg.device_name})`,
+      name:   `AVAkiOSC (${cfg.device_name})`,
       port:   cfg.osc_port,
-      props:  { app: 'kiosc-browsr', version: '2' }
+      props:  { app: 'avakiosc', version: '2' }
     })
     console.log(`[mdns] advertising "${cfg.device_name}" on :${cfg.osc_port}`)
 
@@ -231,7 +231,7 @@ function renderDeviceList () {
     return
   }
 
-  const isSelf = (name) => name === `KiOSC-BrowsR (${cfg.device_name})`
+  const isSelf = (name) => name === `AVAkiOSC (${cfg.device_name})`
 
   deviceList.innerHTML = ''
   for (const [name, svc] of peers) {
