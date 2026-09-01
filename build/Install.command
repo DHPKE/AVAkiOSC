@@ -1,5 +1,5 @@
 #!/bin/bash
-# KiOSC-BrowsR installer
+# AVAkiOSC installer
 #
 # HOW TO RUN THIS SCRIPT:
 #   Right-click (or Control-click) this file → Open
@@ -9,18 +9,18 @@
 # a "damaged" error on double-click; right-click → Open bypasses it.
 #
 # ALTERNATIVE (Terminal):
-#   xattr -cr ~/Downloads/KiOSC-BrowsR-*.dmg
-#   Then mount the DMG and drag KiOSC-BrowsR.app to Applications.
+#   xattr -cr ~/Downloads/AVAkiOSC-*.dmg
+#   Then mount the DMG and drag AVAkiOSC.app to Applications.
 
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-APP_NAME="KiOSC-BrowsR.app"
+APP_NAME="AVAkiOSC.app"
 SRC="$SCRIPT_DIR/$APP_NAME"
 DEST="/Applications/$APP_NAME"
 
 if [ ! -d "$SRC" ]; then
-  osascript -e 'display alert "Install failed" message "KiOSC-BrowsR.app not found next to this script."'
+  osascript -e 'display alert "Install failed" message "AVAkiOSC.app not found next to this script."'
   exit 1
 fi
 
@@ -36,6 +36,6 @@ ditto "$SRC" "$DEST"
 # Remove quarantine from the installed copy too
 xattr -dr com.apple.quarantine "$DEST" 2>/dev/null || true
 
-osascript -e 'display notification "KiOSC-BrowsR has been installed to Applications." with title "Install complete"'
+osascript -e 'display notification "AVAkiOSC has been installed to Applications." with title "Install complete"'
 
 open "$DEST"

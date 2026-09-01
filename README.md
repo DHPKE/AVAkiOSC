@@ -1,4 +1,4 @@
-# KiOSC-BrowsR
+# AVAkiOSC
 
 OSC / UDP-controlled browser kiosk for **Linux**, **macOS**, **Windows**, **Android**, and **iOS**.
 
@@ -25,15 +25,15 @@ A full-screen browser window is controlled remotely via OSC or plain UDP text me
 
 ### Download a release
 
-Go to [Releases](https://github.com/DHPKE/KiOSC-BROSR/releases) and download the file for your platform:
+Go to [Releases](https://github.com/DHPKE/AVAkiOSC/releases) and download the file for your platform:
 
 | Platform | File |
 |---|---|
-| macOS (Apple Silicon) | `KiOSC-BrowsR-*-arm64.dmg` |
-| macOS (Intel) | `KiOSC-BrowsR-*.dmg` |
-| Linux (Debian / Ubuntu) | `kiosc-browsr_*.deb` |
-| Linux (any distro) | `KiOSC-BrowsR-*.AppImage` |
-| Windows | `KiOSC-BrowsR-Setup-*.exe` |
+| macOS (Apple Silicon) | `AVAkiOSC-*-arm64.dmg` |
+| macOS (Intel) | `AVAkiOSC-*.dmg` |
+| Linux (Debian / Ubuntu) | `avakiosc_*.deb` |
+| Linux (any distro) | `AVAkiOSC-*.AppImage` |
+| Windows | `AVAkiOSC-Setup-*.exe` |
 
 ### Run in development mode (no kiosk)
 
@@ -71,16 +71,16 @@ To fully quit the app from the admin panel, use the OS-level approach below — 
 | OS | Action | Shortcut |
 |---|---|---|
 | **All** | Exit dev mode (`--no-kiosk`) | `Alt+F4` / `Cmd+Q` |
-| **Windows** | Task Manager | `Ctrl+Shift+Esc`, then end the `kiosc-browsr` process |
-| **macOS** | Force quit | `Cmd+Option+Esc`, select KiOSC-BrowsR |
-| **Linux (X11)** | Kill window | `Ctrl+Alt+T` on another TTY, then `pkill kiosc-browsr` |
-| **Linux (kiosk machine)** | Switch TTY | `Ctrl+Alt+F2`, log in, then `sudo systemctl stop kiosc-browsr` |
+| **Windows** | Task Manager | `Ctrl+Shift+Esc`, then end the `avakiosc` process |
+| **macOS** | Force quit | `Cmd+Option+Esc`, select AVAkiOSC |
+| **Linux (X11)** | Kill window | `Ctrl+Alt+T` on another TTY, then `pkill avakiosc` |
+| **Linux (kiosk machine)** | Switch TTY | `Ctrl+Alt+F2`, log in, then `sudo systemctl stop avakiosc` |
 
 ### Via SSH (headless / kiosk machine)
 
 ```bash
 ssh user@<hostname>
-sudo systemctl stop kiosc-browsr
+sudo systemctl stop avakiosc
 ```
 
 ### Via OSC or UDP (from a controller)
@@ -173,12 +173,12 @@ goto https://example.com <hex_hmac_of_"goto https://example.com">
 
 ## Finding devices on the network (mDNS)
 
-KiOSC-BrowsR advertises two mDNS services on startup:
+AVAkiOSC advertises two mDNS services on startup:
 
 | Service type | Name | Resolves to |
 |---|---|---|
-| `_osc._udp` | `KiOSC-BrowsR (<device-name>)` | OSC control port |
-| `_http._tcp` | `KiOSC-BrowsR Admin (<device-name>)` | Web admin port |
+| `_osc._udp` | `AVAkiOSC (<device-name>)` | OSC control port |
+| `_http._tcp` | `AVAkiOSC Admin (<device-name>)` | Web admin port |
 
 **From a browser:** `http://<hostname>.local:8080`
 
@@ -197,11 +197,11 @@ avahi-browse _osc._udp             # Linux
 
 ## Configuration file
 
-KiOSC-BrowsR looks for a config file in this order:
+AVAkiOSC looks for a config file in this order:
 
-1. Path in the `KIOSC_CONFIG` environment variable
+1. Path in the `AVAKIOSC_CONFIG` environment variable
 2. `<userData>/config.yaml` (writable app data folder)
-3. `/etc/kiosc-browsr/config.yaml` (Linux system-wide)
+3. `/etc/avakiosc/config.yaml` (Linux system-wide)
 
 If none is found, built-in defaults are used.
 
@@ -253,9 +253,9 @@ autostart: true
 
 | OS | Path |
 |---|---|
-| macOS | `~/Library/Application Support/kiosc-browsr/` |
-| Windows | `%APPDATA%\kiosc-browsr\` |
-| Linux | `~/.config/kiosc-browsr/` |
+| macOS | `~/Library/Application Support/avakiosc/` |
+| Windows | `%APPDATA%\avakiosc\` |
+| Linux | `~/.config/avakiosc/` |
 
 ---
 
@@ -264,8 +264,8 @@ autostart: true
 **Prerequisites:** Node.js 22+, npm
 
 ```bash
-git clone https://github.com/DHPKE/KiOSC-BROSR.git
-cd KiOSC-BROSR
+git clone https://github.com/DHPKE/AVAkiOSC.git
+cd AVAkiOSC
 npm install
 
 # Development (windowed, F12 = DevTools)
@@ -326,14 +326,14 @@ Same as desktop — all commands listed in the [OSC reference](#osc-command-refe
 For a dedicated Debian/Ubuntu kiosk machine that boots straight into the browser, use the legacy installer script (installs Chromium + Python-based service). All installer scripts, systemd units, and a sample config now live in [`Debian-installer/`](Debian-installer/) — see [INSTALL.md](INSTALL.md) for full instructions.
 
 ```bash
-sudo bash Debian-installer/setup-kioscbrowsr.sh
+sudo bash Debian-installer/setup-avakiosc.sh
 ```
 
 For the new Electron-based service on Linux, install the `.deb` from Releases and enable it as a systemd service:
 
 ```bash
-sudo dpkg -i kiosc-browsr_*.deb
-sudo systemctl enable --now kiosc-browsr
+sudo dpkg -i avakiosc_*.deb
+sudo systemctl enable --now avakiosc
 ```
 
-The service runs as the current user's desktop session. For a true headless kiosk, configure autologin and add `kiosc-browsr` to the autostart of your window manager.
+The service runs as the current user's desktop session. For a true headless kiosk, configure autologin and add `avakiosc` to the autostart of your window manager.

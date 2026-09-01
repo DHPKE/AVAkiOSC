@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KiOSC-BrowsR Admin</title>
+  <title>AVAkiOSC Admin</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -310,7 +310,7 @@
   <img src="pke-logo.svg" alt="PKE" style="height:26px;width:auto;flex-shrink:0;">
   <div style="width:1px;height:22px;background:var(--border);flex-shrink:0"></div>
   <div class="dot" id="hdr-dot"></div>
-  <h1>KiOSC-BrowsR</h1>
+  <h1>AVAkiOSC</h1>
   <span class="status-text" id="hdr-status">connecting…</span>
   <div class="spacer"></div>
   <span class="hostname" id="hdr-hostname"></span>
@@ -476,7 +476,7 @@
     <div class="toggle-row">
       <div class="toggle-label">
         <span>Launch at login</span>
-        <small>Start KiOSC-BrowsR automatically when the system boots</small>
+        <small>Start AVAkiOSC automatically when the system boots</small>
       </div>
       <label class="switch">
         <input type="checkbox" id="tog-launch-at-login" onchange="toggleSetting('launch_at_login', this.checked)">
@@ -646,7 +646,7 @@
     }
   }
   async function confirmRestart() {
-    if (!confirm('Restart the KiOSC-BrowsR app now?')) return
+    if (!confirm('Restart the AVAkiOSC app now?')) return
     await apiFetch('POST', '/api/command', { cmd: 'restart_app' })
     toast('Restarting…')
   }

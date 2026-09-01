@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""KiOSC-BrowsR Service - Browser remote control for kiosk systems"""
+"""AVAkiOSC Service - Browser remote control for kiosk systems"""
 
 import os, sys, time, hmac, hashlib, socket, subprocess, threading, signal, yaml, logging
 from pythonosc.dispatcher import Dispatcher
@@ -7,9 +7,9 @@ from pythonosc.osc_server import ThreadingOSCUDPServer
 import pychrome
 
 # Logging
-logger = logging.getLogger('kiosc')
+logger = logging.getLogger('avakiosc')
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('/var/log/kiosc-browsr.log')
+fh = logging.FileHandler('/var/log/avakiosc.log')
 ch = logging.StreamHandler(sys.stdout)
 fmt = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s: %(message)s')
 fh.setFormatter(fmt)
@@ -298,7 +298,7 @@ def handle_signal(signum, frame):
 
 def main():
     """Main entry point"""
-    config_file = os.environ.get('KIOSC_CONFIG', '/etc/kiosc-browsr/config.yaml')
+    config_file = os.environ.get('AVAKIOSC_CONFIG', '/etc/avakiosc/config.yaml')
     read_yaml_config(config_file)
     
     init_watchdog_thread()

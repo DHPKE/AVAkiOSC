@@ -45,9 +45,9 @@ let cfg = { ...DEFAULTS }
 
 function getConfigPaths () {
   return [
-    process.env.KIOSC_CONFIG,
+    process.env.AVAKIOSC_CONFIG,
     path.join(app.getPath('userData'), 'config.yaml'),
-    '/etc/kiosc-browsr/config.yaml'
+    '/etc/avakiosc/config.yaml'
   ].filter(Boolean)
 }
 
@@ -340,7 +340,7 @@ function testModeHtml () {
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KiOSC-BrowsR \u00b7 Test Mode</title>
+<title>AVAkiOSC \u00b7 Test Mode</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,monospace;
@@ -366,7 +366,7 @@ body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Se
 </head>
 <body>
 <div class="badge">Test Mode</div>
-<div class="version">KiOSC-BrowsR v2</div>
+<div class="version">AVAkiOSC v2</div>
 <div class="label">Kiosk Name</div>
 <div class="name">${name}</div>
 <div class="ips">${ipRows}</div>
@@ -439,14 +439,14 @@ function restartApp () {
 function applyLoginItem () {
   if (process.platform === 'linux') {
     const desktopDir  = path.join(os.homedir(), '.config', 'autostart')
-    const desktopFile = path.join(desktopDir, 'kiosc-browsr.desktop')
+    const desktopFile = path.join(desktopDir, 'avakiosc.desktop')
     if (cfg.launch_at_login) {
       try {
         fs.mkdirSync(desktopDir, { recursive: true })
         fs.writeFileSync(desktopFile, [
           '[Desktop Entry]',
           'Type=Application',
-          'Name=KiOSC-BrowsR',
+          'Name=AVAkiOSC',
           `Exec=${process.execPath}`,
           'Hidden=false',
           'NoDisplay=false',
@@ -642,8 +642,8 @@ function startUdp () {
 //  Advertises two services on the local network so clients can be found
 //  without knowing IP addresses:
 //
-//   _osc._udp  "KiOSC-BrowsR (<hostname>)"   → OSC control port
-//   _http._tcp "KiOSC-BrowsR Admin (<name>)"  → web admin port
+//   _osc._udp  "AVAkiOSC (<hostname>)"   → OSC control port
+//   _http._tcp "AVAkiOSC Admin (<name>)"  → web admin port
 //
 //  From any OSC app on the LAN: browse _osc._udp to find kiosk instances.
 //  From a browser: http://<hostname>.local:<web_port>
@@ -654,25 +654,25 @@ function startMdns () {
     bonjour = new Bonjour()
 
     bonjour.publish({
-      name:     `KiOSC-BrowsR (${cfg.mdns_name})`,
+      name:     `AVAkiOSC (${cfg.mdns_name})`,
       type:     'osc',
       protocol: 'udp',
       port:     cfg.osc_port,
       txt: {
         udp_text_port: String(cfg.udp_text_port),
-        app:           'kiosc-browsr',
+        app:           'avakiosc',
         version:       '2'
       }
     })
 
     bonjour.publish({
-      name:     `KiOSC-BrowsR Admin (${cfg.mdns_name})`,
+      name:     `AVAkiOSC Admin (${cfg.mdns_name})`,
       type:     'http',
       protocol: 'tcp',
       port:     cfg.web_port,
       txt: {
         path: '/',
-        app:  'kiosc-browsr'
+        app:  'avakiosc'
       }
     })
 
@@ -713,7 +713,7 @@ function startWebAdmin () {
 
     if (user !== cfg.web_user || pass !== cfg.web_pass) {
       res.writeHead(401, {
-        'WWW-Authenticate': 'Basic realm="KiOSC-BrowsR Admin"',
+        'WWW-Authenticate': 'Basic realm="AVAkiOSC Admin"',
         'Content-Type':     'text/plain'
       })
       return res.end('Unauthorized')

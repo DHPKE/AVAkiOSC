@@ -47,7 +47,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kiosc-browsr-${{ matrix.platform }}
+          name: avakiosc-${{ matrix.platform }}
           path: |
             dist/*.deb
             dist/*.AppImage

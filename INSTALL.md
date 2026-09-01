@@ -1,6 +1,6 @@
-# Installing KiOSC-BrowsR
+# Installing AVAkiOSC
 
-KiOSC-BrowsR ships two different ways to run it. Pick the one that matches your machine.
+AVAkiOSC ships two different ways to run it. Pick the one that matches your machine.
 
 | Path | Use case | Browser engine |
 |---|---|---|
@@ -11,36 +11,36 @@ KiOSC-BrowsR ships two different ways to run it. Pick the one that matches your 
 
 ## 1. macOS / Windows / Ubuntu Desktop (Electron app)
 
-Download the file for your platform from [Releases](https://github.com/DHPKE/KiOSC-BROSR/releases):
+Download the file for your platform from [Releases](https://github.com/DHPKE/AVAkiOSC/releases):
 
 | Platform | File |
 |---|---|
-| macOS (Apple Silicon) | `KiOSC-BrowsR-*-arm64.dmg` |
-| macOS (Intel) | `KiOSC-BrowsR-*.dmg` |
-| Ubuntu / Debian | `kiosc-browsr_*_amd64.deb` (or `arm64.deb` on ARM) |
-| Linux (any distro) | `KiOSC-BrowsR-*.AppImage` |
-| Windows | `KiOSC-BrowsR-Setup-*.exe` |
+| macOS (Apple Silicon) | `AVAkiOSC-*-arm64.dmg` |
+| macOS (Intel) | `AVAkiOSC-*.dmg` |
+| Ubuntu / Debian | `avakiosc_*_amd64.deb` (or `arm64.deb` on ARM) |
+| Linux (any distro) | `AVAkiOSC-*.AppImage` |
+| Windows | `AVAkiOSC-Setup-*.exe` |
 
 ### Ubuntu / Debian install
 
 ```bash
 sudo apt update
-sudo apt install ./kiosc-browsr_*.deb
+sudo apt install ./avakiosc_*.deb
 ```
 
 Launch it:
 
 ```bash
-kiosc-browsr
+avakiosc
 ```
 
 ### Configuration
 
 Config file lookup order:
 
-1. `$KIOSC_CONFIG` environment variable
-2. `<userData>/config.yaml` (e.g. `~/.config/kiosc-browsr/` on Linux)
-3. `/etc/kiosc-browsr/config.yaml` (Linux system-wide)
+1. `$AVAKIOSC_CONFIG` environment variable
+2. `<userData>/config.yaml` (e.g. `~/.config/avakiosc/` on Linux)
+3. `/etc/avakiosc/config.yaml` (Linux system-wide)
 
 See [`config/config.yaml.example`](config/config.yaml.example) for all available options (start URL, kiosk mode, OSC/UDP ports, web admin credentials, etc).
 
@@ -48,7 +48,7 @@ See [`config/config.yaml.example`](config/config.yaml.example) for all available
 
 ```bash
 mkdir -p ~/.config/autostart
-cp /usr/share/applications/kiosc-browsr.desktop ~/.config/autostart/
+cp /usr/share/applications/avakiosc.desktop ~/.config/autostart/
 ```
 
 Then enable automatic login for the user in Settings.
@@ -56,8 +56,8 @@ Then enable automatic login for the user in Settings.
 ### Building from source
 
 ```bash
-git clone https://github.com/DHPKE/KiOSC-BROSR.git
-cd KiOSC-BROSR
+git clone https://github.com/DHPKE/AVAkiOSC.git
+cd AVAkiOSC
 npm install
 npm run build:linux    # → dist/*.deb + *.AppImage
 npm run build:mac      # → dist/*.dmg
@@ -73,7 +73,7 @@ Requires Node.js 22+.
 Use [`Debian-installer/install-rpi4.sh`](Debian-installer/install-rpi4.sh). Run as the desktop user (not root):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/Debian-installer/install-rpi4.sh -o install-rpi4.sh
+curl -fsSL https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/Debian-installer/install-rpi4.sh -o install-rpi4.sh
 bash install-rpi4.sh --url https://example.com
 ```
 
@@ -88,25 +88,25 @@ Common options:
 --no-autostart         Skip XDG autostart entry
 ```
 
-This downloads the latest arm64 AppImage, installs it to `/opt/KiOSC-BrowsR/`, creates a `.desktop` launcher, sets up XDG autostart, and cleans up the labwc/pcmanfm desktop chrome for a kiosk look.
+This downloads the latest arm64 AppImage, installs it to `/opt/AVAkiOSC/`, creates a `.desktop` launcher, sets up XDG autostart, and cleans up the labwc/pcmanfm desktop chrome for a kiosk look.
 
 ---
 
 ## 3. Dedicated Debian/Ubuntu kiosk machine (legacy Python installer)
 
-For a headless machine that should boot straight into a locked-down Chromium kiosk (no desktop environment required), use [`Debian-installer/setup-kioscbrowsr.sh`](Debian-installer/setup-kioscbrowsr.sh). This installs Chromium (or Google Chrome as a fallback), a Python-based OSC/UDP + WebAdmin service, and configures autologin + X on `tty1`.
+For a headless machine that should boot straight into a locked-down Chromium kiosk (no desktop environment required), use [`Debian-installer/setup-avakiosc.sh`](Debian-installer/setup-avakiosc.sh). This installs Chromium (or Google Chrome as a fallback), a Python-based OSC/UDP + WebAdmin service, and configures autologin + X on `tty1`.
 
 Run as root on Debian 12/13 or Ubuntu:
 
 ```bash
-sudo bash Debian-installer/setup-kioscbrowsr.sh
+sudo bash Debian-installer/setup-avakiosc.sh
 ```
 
 Or fetch it directly from the repo:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DHPKE/KiOSC-BROSR/main/Debian-installer/setup-kioscbrowsr.sh -o setup-kioscbrowsr.sh
-sudo bash setup-kioscbrowsr.sh
+curl -fsSL https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/Debian-installer/setup-avakiosc.sh -o setup-avakiosc.sh
+sudo bash setup-avakiosc.sh
 ```
 
 Override defaults via environment variables before running:
@@ -114,7 +114,7 @@ Override defaults via environment variables before running:
 ```bash
 KIOSK_URL="https://my-show-page.com" \
 WEBADMIN_PASS="a-strong-password" \
-sudo -E bash setup-kioscbrowsr.sh
+sudo -E bash setup-avakiosc.sh
 ```
 
 | Variable | Default | Description |
@@ -130,21 +130,21 @@ What the script does:
 
 1. Installs `xserver-xorg`, `openbox`, `chromium` (or Google Chrome fallback), Python 3 + venv, and supporting tools.
 2. Creates the `kiosk` Linux user with a passwordless sudo rule scoped to restarting the two services.
-3. Sets up a Python virtualenv at `/opt/kiosc-browsr/venv` with `python-osc`, `pychrome`, `flask`, `pyyaml`.
-4. Writes `/etc/kiosc-browsr/config.yaml`.
-5. Installs the systemd units [`Debian-installer/kiosc-browsr.service`](Debian-installer/kiosc-browsr.service) and [`Debian-installer/kiosc-webadmin.service`](Debian-installer/kiosc-webadmin.service).
+3. Sets up a Python virtualenv at `/opt/avakiosc/venv` with `python-osc`, `pychrome`, `flask`, `pyyaml`.
+4. Writes `/etc/avakiosc/config.yaml`.
+5. Installs the systemd units [`Debian-installer/avakiosc.service`](Debian-installer/avakiosc.service) and [`Debian-installer/avakiosc-webadmin.service`](Debian-installer/avakiosc-webadmin.service).
 6. Configures autologin on `tty1` and an `.xinitrc` that starts Openbox.
 7. Applies Chromium managed policies to lock the homepage and disable incognito/download prompts/password manager.
 8. Enables and starts both services.
 
-After install, review `/etc/kiosc-browsr/config.yaml`, change the web admin password, then reboot.
+After install, review `/etc/avakiosc/config.yaml`, change the web admin password, then reboot.
 
 ### Managing the services
 
 ```bash
-sudo systemctl status kiosc-browsr kiosc-webadmin
-sudo systemctl restart kiosc-browsr
-sudo journalctl -u kiosc-browsr -f
+sudo systemctl status avakiosc avakiosc-webadmin
+sudo systemctl restart avakiosc
+sudo journalctl -u avakiosc -f
 ```
 
 ---
@@ -154,15 +154,15 @@ sudo journalctl -u kiosc-browsr -f
 **Electron `.deb` package:**
 
 ```bash
-sudo apt remove kiosc-browsr
+sudo apt remove avakiosc
 ```
 
 **Legacy Debian kiosk installer:**
 
 ```bash
-sudo systemctl disable --now kiosc-browsr kiosc-webadmin
-sudo rm -rf /opt/kiosc-browsr /etc/kiosc-browsr
-sudo rm /etc/systemd/system/kiosc-browsr.service /etc/systemd/system/kiosc-webadmin.service
+sudo systemctl disable --now avakiosc avakiosc-webadmin
+sudo rm -rf /opt/avakiosc /etc/avakiosc
+sudo rm /etc/systemd/system/avakiosc.service /etc/systemd/system/avakiosc-webadmin.service
 sudo rm /etc/systemd/system/getty@tty1.service.d/override.conf
 sudo userdel -r kiosk   # optional — removes the kiosk user and its home directory
 sudo systemctl daemon-reload
@@ -171,6 +171,6 @@ sudo systemctl daemon-reload
 **Raspberry Pi AppImage install:**
 
 ```bash
-sudo rm -rf /opt/KiOSC-BrowsR /usr/share/applications/kiosc-browsr.desktop
-rm -f ~/.config/autostart/kiosc-browsr.desktop
+sudo rm -rf /opt/AVAkiOSC /usr/share/applications/avakiosc.desktop
+rm -f ~/.config/autostart/avakiosc.desktop
 ```

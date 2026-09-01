@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install-rpi4.sh — KiOSC-BrowsR installer for Raspberry Pi 4 (Raspberry Pi OS 64-bit)
+# install-rpi4.sh — AVAkiOSC installer for Raspberry Pi 4 (Raspberry Pi OS 64-bit)
 #
 # Run as the desktop user (not root). Uses sudo internally where required.
 # Usage:
@@ -15,7 +15,7 @@
 #
 # What this script does:
 #   1. Downloads the latest arm64 AppImage from GitHub
-#   2. Extracts and installs to /opt/KiOSC-BrowsR/
+#   2. Extracts and installs to /opt/AVAkiOSC/
 #   3. Creates a .desktop launcher
 #   4. Creates an XDG autostart entry so the app launches at login
 #   5. Optionally sets the display resolution in /boot/firmware/cmdline.txt
@@ -24,9 +24,9 @@
 set -euo pipefail
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
-GITHUB_REPO="DHPKE/KiOSC-BROSR"
-INSTALL_DIR="/opt/KiOSC-BrowsR"
-BINARY="kiosc-browsr"
+GITHUB_REPO="DHPKE/AVAkiOSC"
+INSTALL_DIR="/opt/AVAkiOSC"
+BINARY="avakiosc"
 KIOSK_URL="https://example.com"
 RESOLUTION=""
 AUTOSTART=true
@@ -75,8 +75,8 @@ if [[ -z "$APPIMAGE_URL" ]]; then
   exit 1
 fi
 
-APPIMAGE_FILE="$TMPDIR_WORK/KiOSC-BrowsR-arm64.AppImage"
-echo "Downloading KiOSC-BrowsR ${VERSION} (arm64)..."
+APPIMAGE_FILE="$TMPDIR_WORK/AVAkiOSC-arm64.AppImage"
+echo "Downloading AVAkiOSC ${VERSION} (arm64)..."
 curl -fL --progress-bar "$APPIMAGE_URL" -o "$APPIMAGE_FILE"
 chmod +x "$APPIMAGE_FILE"
 
@@ -86,7 +86,7 @@ cd "$TMPDIR_WORK"
 "$APPIMAGE_FILE" --appimage-extract >/dev/null
 cd - >/dev/null
 
-# ── Install to /opt/KiOSC-BrowsR ──────────────────────────────────────────────
+# ── Install to /opt/AVAkiOSC ──────────────────────────────────────────────
 echo "Installing to ${INSTALL_DIR}..."
 sudo mkdir -p "$INSTALL_DIR"
 sudo cp -r "$TMPDIR_WORK/squashfs-root/." "$INSTALL_DIR/"
@@ -98,30 +98,30 @@ sudo chmod -R a+rX "${INSTALL_DIR}/locales/" 2>/dev/null || true
 
 # ── Write .desktop file ───────────────────────────────────────────────────────
 DESKTOP_CONTENT="[Desktop Entry]
-Name=KiOSC-BrowsR
+Name=AVAkiOSC
 Exec=env LD_LIBRARY_PATH=${INSTALL_DIR} ${INSTALL_DIR}/${BINARY} --no-sandbox %U
 Terminal=false
 Type=Application
-Icon=kiosc-browsr
-StartupWMClass=KiOSC-BrowsR
+Icon=avakiosc
+StartupWMClass=AVAkiOSC
 Comment=OSC/UDP-controlled browser kiosk
 Categories=Utility;"
 
-echo "$DESKTOP_CONTENT" | sudo tee "${INSTALL_DIR}/kiosc-browsr.desktop" >/dev/null
+echo "$DESKTOP_CONTENT" | sudo tee "${INSTALL_DIR}/avakiosc.desktop" >/dev/null
 sudo mkdir -p /usr/share/applications
-echo "$DESKTOP_CONTENT" | sudo tee /usr/share/applications/kiosc-browsr.desktop >/dev/null
+echo "$DESKTOP_CONTENT" | sudo tee /usr/share/applications/avakiosc.desktop >/dev/null
 echo "Desktop file written."
 
 # ── XDG autostart ─────────────────────────────────────────────────────────────
 if [[ "$AUTOSTART" == "true" ]]; then
   AUTOSTART_DIR="$HOME/.config/autostart"
   mkdir -p "$AUTOSTART_DIR"
-  echo "$DESKTOP_CONTENT" > "$AUTOSTART_DIR/kiosc-browsr.desktop"
-  echo "Autostart entry created: ${AUTOSTART_DIR}/kiosc-browsr.desktop"
+  echo "$DESKTOP_CONTENT" > "$AUTOSTART_DIR/avakiosc.desktop"
+  echo "Autostart entry created: ${AUTOSTART_DIR}/avakiosc.desktop"
 fi
 
 # ── Starter config.yaml ───────────────────────────────────────────────────────
-CONFIG_DIR="$HOME/.config/kiosc-browsr"
+CONFIG_DIR="$HOME/.config/avakiosc"
 CONFIG_FILE="$CONFIG_DIR/config.yaml"
 if [[ ! -f "$CONFIG_FILE" ]]; then
   mkdir -p "$CONFIG_DIR"
@@ -177,7 +177,7 @@ fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
-echo "KiOSC-BrowsR ${VERSION} installed successfully."
+echo "AVAkiOSC ${VERSION} installed successfully."
 echo ""
 echo "  Install dir : ${INSTALL_DIR}"
 echo "  Config      : ${CONFIG_FILE}"

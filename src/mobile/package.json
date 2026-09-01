@@ -1,7 +1,7 @@
 {
-  "name": "kiosc-browsr-mobile",
+  "name": "avaavakiosc-mobile",
   "version": "2.0.0",
-  "description": "KiOSC-BrowsR — Capacitor mobile app (Android / iOS)",
+  "description": "AVAkiOSC — Capacitor mobile app (Android / iOS)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
