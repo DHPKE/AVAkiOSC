@@ -45,6 +45,13 @@ XWRAP
 
 # Pre-configure the onboard virtual keyboard to auto-show on focused text fields (via AT-SPI).
 # Written as a system default (no live D-Bus session required at install time).
+# The 'user' profile must explicitly chain in the 'local' system database, otherwise
+# a minimal Debian install (no full desktop session) ignores /etc/dconf/db/local.d entirely.
+mkdir -p /etc/dconf/profile
+cat > /etc/dconf/profile/user <<'DPROFILE'
+user-db:user
+system-db:local
+DPROFILE
 mkdir -p /etc/dconf/db/local.d
 cat > /etc/dconf/db/local.d/01-onboard <<'DCONF'
 [org/onboard/auto-show]

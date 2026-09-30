@@ -120,8 +120,16 @@ def is_onboard_running():
 
 
 def start_onboard():
-    if not is_onboard_running():
-        subprocess.Popen(['onboard'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if is_onboard_running():
+        return
+    env = os.environ.copy()
+    # Join the kiosk X session's real D-Bus session bus so onboard's AT-SPI focus
+    # detection actually sees Chromium's accessibility events (instead of spawning
+    # its own isolated private bus when DBUS_SESSION_BUS_ADDRESS is unset).
+    bus_path = f"/run/user/{os.getuid()}/bus"
+    if os.path.exists(bus_path):
+        env['DBUS_SESSION_BUS_ADDRESS'] = f"unix:path={bus_path}"
+    subprocess.Popen(['onboard'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
 
 
 def stop_onboard():

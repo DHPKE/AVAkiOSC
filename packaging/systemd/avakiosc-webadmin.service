@@ -8,7 +8,7 @@ Group=kiosk
 Environment=PATH=/opt/avakiosc/venv/bin:/usr/bin:/bin
 Environment=DISPLAY=:0
 WorkingDirectory=/opt/avakiosc/app
-ExecStart=/opt/avakiosc/venv/bin/python /opt/avakiosc/app/webadmin.py
+ExecStart=/bin/sh -c 'export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus; exec /opt/avakiosc/venv/bin/python /opt/avakiosc/app/webadmin.py'
 Restart=on-failure
 RestartSec=2
 
