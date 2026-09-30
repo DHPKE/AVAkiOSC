@@ -31,10 +31,17 @@ fi
 # Update & base deps
 apt update
 DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-  xserver-xorg xinit openbox x11-xserver-utils fonts-dejavu-core unclutter \
+  xserver-xorg xserver-xorg-legacy xinit openbox x11-xserver-utils fonts-dejavu-core unclutter \
   ca-certificates wget curl gnupg lsb-release sudo dbus-x11 python3 python3-venv \
   build-essential xdotool x11-utils xinput \
   unattended-upgrades
+
+# xserver-xorg-legacy provides the setuid Xorg.wrap needed so a non-logind
+# xinit session (autologin + .bash_profile) can access the VT/console.
+cat > /etc/X11/Xwrapper.config <<'XWRAP'
+allowed_users=anybody
+needs_root_rights=yes
+XWRAP
 
 # python3-distutils was removed from Debian repos for Python >= 3.12 (Debian 13/trixie);
 # it is only needed as a build-time shim, so install it if available and ignore failure otherwise.
@@ -164,18 +171,18 @@ chmod 644 /home/${KIOSK_USER}/.bash_profile
 # Create an Xmodmap file to disable Alt+Tab / Alt+F4 / Ctrl+Alt+Fx handling in X (best-effort)
 cat > /home/${KIOSK_USER}/.Xmodmap <<'XMAP'
 ! Remove Alt and Super from modifier list that cause switching; map F1-F12 to no-op via keysym
-keysym F1 = F1_Noop
-keysym F2 = F2_Noop
-keysym F3 = F3_Noop
-keysym F4 = F4_Noop
-keysym F5 = F5_Noop
-keysym F6 = F6_Noop
-keysym F7 = F7_Noop
-keysym F8 = F8_Noop
-keysym F9 = F9_Noop
-keysym F10 = F10_Noop
-keysym F11 = F11_Noop
-keysym F12 = F12_Noop
+keysym F1 = VoidSymbol
+keysym F2 = VoidSymbol
+keysym F3 = VoidSymbol
+keysym F4 = VoidSymbol
+keysym F5 = VoidSymbol
+keysym F6 = VoidSymbol
+keysym F7 = VoidSymbol
+keysym F8 = VoidSymbol
+keysym F9 = VoidSymbol
+keysym F10 = VoidSymbol
+keysym F11 = VoidSymbol
+keysym F12 = VoidSymbol
 ! Unmap Alt+Tab by removing mod1 or mapping it away is tricky; this is best-effort.
 XMAP
 chown ${KIOSK_USER}:${KIOSK_USER} /home/${KIOSK_USER}/.Xmodmap
