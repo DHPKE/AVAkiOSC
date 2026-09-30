@@ -111,6 +111,23 @@ def apply_rotation(rotation):
     apply_touch_rotation(rotation)
 
 
+def is_onboard_running():
+    try:
+        subprocess.check_output(['pgrep', '-x', 'onboard'], timeout=2)
+        return True
+    except Exception:
+        return False
+
+
+def start_onboard():
+    if not is_onboard_running():
+        subprocess.Popen(['onboard'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def stop_onboard():
+    subprocess.run(['pkill', '-x', 'onboard'], check=False)
+
+
 def require_auth(handler):
     @wraps(handler)
     def wrapped(*args, **kwargs):
@@ -302,6 +319,19 @@ input:focus { border-color: var(--accent2); }
     <button class="btn btn-primary" style="width:100%" onclick="applyRotation()">Apply rotation</button>
   </div>
 
+  <div class="card">
+    <h2>Virtual Keyboard</h2>
+    <div class="status-badge" id="kbd-badge">
+      <span class="led"></span>
+      <span id="kbd-label">Unknown</span>
+    </div>
+    <p class="current-url" style="margin-bottom:12px">Shows an on-screen keyboard automatically when a text field is focused in the kiosk browser.</p>
+    <div class="action-grid">
+      <button class="btn btn-primary" onclick="setKeyboard(true)">Enable</button>
+      <button class="btn btn-secondary" onclick="setKeyboard(false)">Disable</button>
+    </div>
+  </div>
+
 </main>
 
 <div id="toast"></div>
@@ -392,6 +422,24 @@ input:focus { border-color: var(--accent2); }
     }
   }
 
+  async function loadKeyboard() {
+    try {
+      const k = await apiFetch('GET', '/api/keyboard')
+      $('kbd-badge').className = 'status-badge' + (k.enabled ? ' active' : '')
+      $('kbd-label').textContent = k.enabled ? 'Enabled' : 'Disabled'
+    } catch (e) { /* ignore */ }
+  }
+
+  async function setKeyboard(enabled) {
+    try {
+      await apiFetch('POST', '/api/keyboard', { enabled })
+      toast(enabled ? 'Virtual keyboard enabled' : 'Virtual keyboard disabled')
+      loadKeyboard()
+    } catch (e) {
+      toast('Failed: ' + e.message)
+    }
+  }
+
   function toast(msg) {
     const el = $('toast')
     el.textContent = msg
@@ -402,6 +450,7 @@ input:focus { border-color: var(--accent2); }
 
   refresh()
   loadSettings()
+  loadKeyboard()
   setInterval(refresh, 5000)
 </script>
 </body>
@@ -485,6 +534,33 @@ def set_screen():
         apply_rotation(rotation)
     except Exception as e:
         return jsonify({'ok': True, 'warning': f'Saved, but live apply failed: {e}'})
+    return jsonify({'ok': True})
+
+
+@app.route('/api/keyboard', methods=['GET'])
+@require_auth
+def get_keyboard():
+    cfg = read_config()
+    return jsonify({
+        'enabled': cfg.get('virtual_keyboard', True),
+        'running': is_onboard_running()
+    })
+
+
+@app.route('/api/keyboard', methods=['POST'])
+@require_auth
+def set_keyboard():
+    body = request.get_json(force=True, silent=True) or {}
+    enabled = body.get('enabled')
+    if not isinstance(enabled, bool):
+        return jsonify({'error': 'enabled must be a boolean'}), 400
+    cfg = read_config()
+    cfg['virtual_keyboard'] = enabled
+    write_config(cfg)
+    if enabled:
+        start_onboard()
+    else:
+        stop_onboard()
     return jsonify({'ok': True})
 
 

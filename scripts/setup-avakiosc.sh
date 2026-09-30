@@ -33,7 +33,7 @@ apt update
 DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
   xserver-xorg xserver-xorg-legacy xinit openbox x11-xserver-utils fonts-dejavu-core unclutter \
   ca-certificates wget curl gnupg lsb-release sudo dbus-x11 python3 python3-venv \
-  build-essential xdotool x11-utils xinput \
+  build-essential xdotool x11-utils xinput onboard at-spi2-core dconf-cli \
   unattended-upgrades
 
 # xserver-xorg-legacy provides the setuid Xorg.wrap needed so a non-logind
@@ -42,6 +42,19 @@ cat > /etc/X11/Xwrapper.config <<'XWRAP'
 allowed_users=anybody
 needs_root_rights=yes
 XWRAP
+
+# Pre-configure the onboard virtual keyboard to auto-show on focused text fields (via AT-SPI).
+# Written as a system default (no live D-Bus session required at install time).
+mkdir -p /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/01-onboard <<'DCONF'
+[org/onboard/auto-show]
+enabled=true
+
+[org/onboard/window]
+docking-enabled=true
+docking-edge='bottom'
+DCONF
+dconf update || true
 
 # python3-distutils was removed from Debian repos for Python >= 3.12 (Debian 13/trixie);
 # it is only needed as a build-time shim, so install it if available and ignore failure otherwise.
@@ -110,9 +123,10 @@ web_bind: "${WEBADMIN_BIND}"
 web_port: ${WEBADMIN_PORT}
 web_user: "${WEBADMIN_USER}"
 web_pass: "${WEBADMIN_PASS}"
-chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start-maximized --remote-debugging-port={debug} '{url}'"
+chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start-maximized --force-renderer-accessibility --remote-debugging-port={debug} '{url}'"
 reset_time: 3600
 screen_rotation: "normal"
+virtual_keyboard: true
 YAML
 
 chown -R "${SERVICE_USER}:${SERVICE_USER}" /etc/avakiosc
@@ -163,6 +177,12 @@ done
 
 # Hide cursor
 unclutter -idle 0.5 -root &
+
+# Launch the on-screen keyboard (auto-shows only when a text field gains focus, via AT-SPI)
+VKBD=$(/opt/avakiosc/venv/bin/python3 -c "import yaml; print((yaml.safe_load(open('/etc/avakiosc/config.yaml')) or {}).get('virtual_keyboard', True))" 2>/dev/null || echo True)
+case "$VKBD" in
+  [Tt]rue) onboard & ;;
+esac
 
 # Disable common key combos via xmodmap (will be applied below)
 if [ -f /home/kiosk/.Xmodmap ]; then

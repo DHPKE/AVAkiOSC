@@ -9,8 +9,9 @@ web_bind: "0.0.0.0"
 web_port: 8080
 web_user: "admin"
 web_pass: "1100pke1100"
-chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start-maximized --remote-debugging-port={debug} '{url}'"
+chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start-maximized --force-renderer-accessibility --remote-debugging-port={debug} '{url}'"
 reset_time: 3600
 hmac_secret: ""
 allowed_ips: []
 screen_rotation: "normal"   # normal | left | right | inverted
+virtual_keyboard: true      # on-screen keyboard, auto-shows on focused text fields
