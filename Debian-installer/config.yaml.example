@@ -5,7 +5,7 @@ osc_bind: "0.0.0.0"
 osc_port: 9000
 udp_text_bind: "0.0.0.0"
 udp_text_port: 9100
-web_bind: "127.0.0.1"
+web_bind: "0.0.0.0"
 web_port: 8080
 web_user: "admin"
 web_pass: "1100pke1100"

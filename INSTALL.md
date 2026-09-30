@@ -123,7 +123,7 @@ sudo -E bash setup-avakiosc.sh
 | `KIOSK_URL` | `https://example.com` | Start URL |
 | `OSC_BIND` / `OSC_PORT` | `0.0.0.0` / `9000` | OSC UDP listener |
 | `UDP_TEXT_PORT` | `9100` | Plaintext UDP listener |
-| `WEBADMIN_BIND` / `WEBADMIN_PORT` | `127.0.0.1` / `8080` | Web admin panel |
+| `WEBADMIN_BIND` / `WEBADMIN_PORT` | `0.0.0.0` / `8080` | Web admin panel (reachable from other machines by default; set to `127.0.0.1` to restrict to localhost) |
 | `WEBADMIN_USER` / `WEBADMIN_PASS` | `admin` / `changeme` | Web admin credentials — **change this** |
 
 What the script does:

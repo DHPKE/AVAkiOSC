@@ -170,4 +170,4 @@ def update_config():
 
 if __name__ == '__main__':
     cfg = read_config()
-    app.run(host=cfg.get('web_bind', '127.0.0.1'), port=cfg.get('web_port', 8080))
+    app.run(host=cfg.get('web_bind', '0.0.0.0'), port=cfg.get('web_port', 8080))
