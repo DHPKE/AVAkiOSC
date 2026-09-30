@@ -98,9 +98,9 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AVAkiOSC Admin</title>
 <style>
-*, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {{
+:root {
   --bg:       #0d1117;
   --surface:  #161b22;
   --border:   #253040;
@@ -110,84 +110,84 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   --text:     #e5e7eb;
   --muted:    #7d9ab5;
   --radius:   10px;
-}}
+}
 
-body {{
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   padding: 0 0 40px;
-}}
+}
 
-header {{
+header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 18px 28px;
   display: flex;
   align-items: center;
   gap: 16px;
-}}
-header h1 {{ font-size: 1.25rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }}
-header .dot {{ width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.3s; }}
-header .dot.active {{ background: var(--accent); box-shadow: 0 0 8px var(--accent); }}
-header .status-text {{ font-size: 0.85rem; color: var(--muted); }}
-header .spacer {{ flex: 1; }}
-header .hostname {{ font-size: 0.85rem; color: var(--accent2); font-family: 'SF Mono', 'Fira Code', monospace; }}
+}
+header h1 { font-size: 1.25rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+header .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.3s; }
+header .dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+header .status-text { font-size: 0.85rem; color: var(--muted); }
+header .spacer { flex: 1; }
+header .hostname { font-size: 0.85rem; color: var(--accent2); font-family: 'SF Mono', 'Fira Code', monospace; }
 
-main {{
+main {
   max-width: 1100px;
   margin: 28px auto;
   padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
-}}
+}
 
-.card {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }}
-.card.wide {{ grid-column: 1 / -1; }}
-.card h2 {{ font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }}
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+.card.wide { grid-column: 1 / -1; }
+.card h2 { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }
 
-.mdns-name {{ font-size: 1.5rem; font-weight: 700; color: var(--accent); font-family: 'SF Mono', 'Fira Code', monospace; margin-bottom: 16px; word-break: break-all; }}
-.addr-table {{ width: 100%; border-collapse: collapse; }}
-.addr-table td {{ padding: 6px 8px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }}
-.addr-table td:first-child {{ color: var(--muted); width: 90px; }}
-.addr-table td:last-child {{ font-family: 'SF Mono', 'Fira Code', monospace; }}
-.addr-table tr:last-child td {{ border-bottom: none; }}
-.addr-table .copy-btn {{ float: right; background: none; border: 1px solid var(--border); color: var(--muted); padding: 1px 7px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }}
-.addr-table .copy-btn:hover {{ color: var(--accent); border-color: var(--accent); }}
-.ip-row {{ margin-top: 12px; font-size: 0.8rem; color: var(--muted); }}
-.ip-row span {{ color: var(--text); font-family: 'SF Mono', 'Fira Code', monospace; }}
+.mdns-name { font-size: 1.5rem; font-weight: 700; color: var(--accent); font-family: 'SF Mono', 'Fira Code', monospace; margin-bottom: 16px; word-break: break-all; }
+.addr-table { width: 100%; border-collapse: collapse; }
+.addr-table td { padding: 6px 8px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+.addr-table td:first-child { color: var(--muted); width: 90px; }
+.addr-table td:last-child { font-family: 'SF Mono', 'Fira Code', monospace; }
+.addr-table tr:last-child td { border-bottom: none; }
+.addr-table .copy-btn { float: right; background: none; border: 1px solid var(--border); color: var(--muted); padding: 1px 7px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
+.addr-table .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.ip-row { margin-top: 12px; font-size: 0.8rem; color: var(--muted); }
+.ip-row span { color: var(--text); font-family: 'SF Mono', 'Fira Code', monospace; }
 
-.status-badge {{ display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; background: rgba(107,114,128,0.15); color: var(--muted); border: 1px solid var(--border); }}
-.status-badge.active {{ background: rgba(52,211,153,0.1); color: var(--accent); border-color: rgba(52,211,153,0.3); }}
-.status-badge .led {{ width: 7px; height: 7px; border-radius: 50%; background: currentColor; }}
-.current-url {{ font-size: 0.83rem; color: var(--muted); word-break: break-all; margin-bottom: 4px; }}
-.current-url strong {{ color: var(--text); font-weight: 400; }}
+.status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; background: rgba(107,114,128,0.15); color: var(--muted); border: 1px solid var(--border); }
+.status-badge.active { background: rgba(52,211,153,0.1); color: var(--accent); border-color: rgba(52,211,153,0.3); }
+.status-badge .led { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.current-url { font-size: 0.83rem; color: var(--muted); word-break: break-all; margin-bottom: 4px; }
+.current-url strong { color: var(--text); font-weight: 400; }
 
-.url-row {{ display: flex; gap: 8px; margin-bottom: 12px; }}
-input[type="url"], input[type="text"], input[type="number"] {{
+.url-row { display: flex; gap: 8px; margin-bottom: 12px; }
+input[type="url"], input[type="text"], input[type="number"] {
   background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
   padding: 9px 12px; font-size: 0.88rem; width: 100%; outline: none; transition: border-color 0.2s;
-}}
-input:focus {{ border-color: var(--accent2); }}
-.btn {{ padding: 9px 18px; border-radius: 6px; border: none; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }}
-.btn:hover {{ opacity: 0.85; }}
-.btn-primary   {{ background: var(--accent);  color: #111; }}
-.btn-secondary {{ background: var(--border);  color: var(--text); }}
-.btn-danger    {{ background: rgba(248,113,113,0.15); color: var(--danger); border: 1px solid rgba(248,113,113,0.3); }}
-.action-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }}
+}
+input:focus { border-color: var(--accent2); }
+.btn { padding: 9px 18px; border-radius: 6px; border: none; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.85; }
+.btn-primary   { background: var(--accent);  color: #111; }
+.btn-secondary { background: var(--border);  color: var(--text); }
+.btn-danger    { background: rgba(248,113,113,0.15); color: var(--danger); border: 1px solid rgba(248,113,113,0.3); }
+.action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
 
-.field {{ margin-bottom: 14px; }}
-.field label {{ display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; }}
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; }
 
-#toast {{
+#toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: #1a1a2e; border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px;
   border-radius: 24px; font-size: 0.85rem; font-weight: 500; pointer-events: none; opacity: 0;
   transition: opacity 0.25s, transform 0.25s; z-index: 999;
-}}
-#toast.show {{ opacity: 1; transform: translateX(-50%) translateY(0); }}
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -273,98 +273,98 @@ input:focus {{ border-color: var(--accent2); }}
 <div id="toast"></div>
 
 <script>
-  async function apiFetch(method, pathname, body) {{
-    const opts = {{ method, headers: {{}} }}
-    if (body !== undefined) {{
+  async function apiFetch(method, pathname, body) {
+    const opts = { method, headers: {} }
+    if (body !== undefined) {
       opts.body = JSON.stringify(body)
       opts.headers['Content-Type'] = 'application/json'
-    }}
+    }
     const r = await fetch(pathname, opts)
     const data = await r.json()
-    if (!r.ok || data.error) throw new Error(data.error || `HTTP ${{r.status}}`)
+    if (!r.ok || data.error) throw new Error(data.error || `HTTP ${r.status}`)
     return data
-  }}
+  }
 
-  function $(id) {{ return document.getElementById(id) }}
+  function $(id) { return document.getElementById(id) }
 
-  async function refresh() {{
-    try {{
+  async function refresh() {
+    try {
       const s = await apiFetch('GET', '/api/status')
       $('hdr-hostname').textContent = s.hostname || ''
       $('hdr-status').textContent = s.active ? 'Active' : 'Inactive'
       $('hdr-dot').className = 'dot' + (s.active ? ' active' : '')
 
-      $('addr-osc').textContent = `${{s.hostname}}:${{s.osc_port}}`
-      $('addr-udp').textContent = `${{s.hostname}}:${{s.udp_text_port}}`
-      $('addr-web').textContent = `http://${{s.hostname}}:${{s.web_port}}`
+      $('addr-osc').textContent = `${s.hostname}:${s.osc_port}`
+      $('addr-udp').textContent = `${s.hostname}:${s.udp_text_port}`
+      $('addr-web').textContent = `http://${s.hostname}:${s.web_port}`
       $('ip-list').textContent = (s.ip_addresses && s.ip_addresses.length) ? s.ip_addresses.join(', ') : '—'
 
       const badge = $('status-badge')
       badge.className = 'status-badge' + (s.active ? ' active' : '')
       $('status-label').textContent = s.active ? 'Active' : 'Inactive'
       $('status-home').textContent = s.start_url || '—'
-      $('status-reset').textContent = s.reset_time > 0 ? `${{s.reset_time}}s` : 'disabled'
-    }} catch (e) {{
+      $('status-reset').textContent = s.reset_time > 0 ? `${s.reset_time}s` : 'disabled'
+    } catch (e) {
       $('hdr-status').textContent = 'offline'
       $('hdr-dot').className = 'dot'
-    }}
-  }}
+    }
+  }
 
-  async function loadSettings() {{
-    try {{
+  async function loadSettings() {
+    try {
       const c = await apiFetch('GET', '/api/status')
       $('cfg-start-url').value  = c.start_url  || ''
       $('cfg-reset-time').value = c.reset_time != null ? c.reset_time : 3600
       $('cfg-rotation').value   = c.screen_rotation || 'normal'
-    }} catch (e) {{ /* ignore */ }}
-  }}
+    } catch (e) { /* ignore */ }
+  }
 
-  async function sendNav() {{
+  async function sendNav() {
     const url = $('nav-url').value.trim()
     if (!url) return
-    await apiFetch('POST', '/api/command', {{ cmd: 'goto', params: {{ url }} }})
+    await apiFetch('POST', '/api/command', { cmd: 'goto', params: { url } })
     toast('Navigating…')
     $('nav-url').value = ''
     setTimeout(refresh, 600)
-  }}
+  }
 
-  async function cmd(name) {{
-    await apiFetch('POST', '/api/command', {{ cmd: name }})
+  async function cmd(name) {
+    await apiFetch('POST', '/api/command', { cmd: name })
     toast(name + '…')
     setTimeout(refresh, 600)
-  }}
+  }
 
-  async function saveSettings() {{
-    const patch = {{
+  async function saveSettings() {
+    const patch = {
       start_url:  $('cfg-start-url').value.trim(),
       reset_time: parseInt($('cfg-reset-time').value, 10) || 0
-    }}
-    try {{
+    }
+    try {
       await apiFetch('POST', '/api/config', patch)
       toast('Settings saved, restarting service…')
-      setTimeout(() => {{ refresh(); loadSettings() }}, 1500)
-    }} catch (e) {{
+      setTimeout(() => { refresh(); loadSettings() }, 1500)
+    } catch (e) {
       toast('Save failed: ' + e.message)
-    }}
-  }}
+    }
+  }
 
-  async function applyRotation() {{
+  async function applyRotation() {
     const rotation = $('cfg-rotation').value
-    try {{
-      const r = await apiFetch('POST', '/api/screen', {{ rotation }})
+    try {
+      const r = await apiFetch('POST', '/api/screen', { rotation })
       toast(r.warning || 'Rotation applied')
-    }} catch (e) {{
+    } catch (e) {
       toast('Failed: ' + e.message)
-    }}
-  }}
+    }
+  }
 
-  function toast(msg) {{
+  function toast(msg) {
     const el = $('toast')
     el.textContent = msg
     el.classList.add('show')
     clearTimeout(el._t)
     el._t = setTimeout(() => el.classList.remove('show'), 2500)
-  }}
+  }
 
   refresh()
   loadSettings()
