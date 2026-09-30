@@ -33,8 +33,12 @@ apt update
 DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
   xserver-xorg xinit openbox x11-xserver-utils fonts-dejavu-core unclutter \
   ca-certificates wget curl gnupg lsb-release sudo dbus-x11 python3 python3-venv \
-  python3-distutils build-essential xdotool x11-utils xinput xmodmap \
+  build-essential xdotool x11-utils xinput \
   unattended-upgrades
+
+# python3-distutils was removed from Debian repos for Python >= 3.12 (Debian 13/trixie);
+# it is only needed as a build-time shim, so install it if available and ignore failure otherwise.
+DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends python3-distutils || true
 
 # Attempt to install chromium from apt without pulling snap
 CHROMIUM_OK=true
@@ -78,6 +82,11 @@ wget -O /opt/avakiosc/app/webadmin.py https://raw.githubusercontent.com/DHPKE/AV
 chmod 755 /opt/avakiosc/app/avakiosc.py
 chmod 755 /opt/avakiosc/app/webadmin.py
 chown -R "${SERVICE_USER}:${SERVICE_USER}" /opt/avakiosc
+
+# avakiosc.py runs as SERVICE_USER and logs to /var/log/avakiosc.log; the file
+# must exist and be writable by that user, otherwise the service fails to start.
+touch /var/log/avakiosc.log
+chown "${SERVICE_USER}:${SERVICE_USER}" /var/log/avakiosc.log
 
 # Default config
 mkdir -p /etc/avakiosc
