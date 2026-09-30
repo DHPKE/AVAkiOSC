@@ -13,3 +13,4 @@ chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start
 reset_time: 3600
 hmac_secret: ""
 allowed_ips: []
+screen_rotation: "normal"   # normal | left | right | inverted

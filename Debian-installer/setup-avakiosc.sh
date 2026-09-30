@@ -85,6 +85,7 @@ install -o "${SERVICE_USER}" -m 755 -d /opt/avakiosc/app
 # Download app files from repository
 wget -O /opt/avakiosc/app/avakiosc.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/avakiosc.py
 wget -O /opt/avakiosc/app/webadmin.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/webadmin.py
+wget -O /opt/avakiosc/app/pke-logo.svg https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/electron/webadmin/pke-logo.svg
 
 chmod 755 /opt/avakiosc/app/avakiosc.py
 chmod 755 /opt/avakiosc/app/webadmin.py
@@ -111,6 +112,7 @@ web_user: "${WEBADMIN_USER}"
 web_pass: "${WEBADMIN_PASS}"
 chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start-maximized --remote-debugging-port={debug} '{url}'"
 reset_time: 3600
+screen_rotation: "normal"
 YAML
 
 chown -R "${SERVICE_USER}:${SERVICE_USER}" /etc/avakiosc
@@ -140,6 +142,13 @@ cat > /home/${KIOSK_USER}/.xinitrc <<'XINIT'
 xset s off
 xset s noblank
 xset -dpms
+
+# Apply screen rotation from config (normal|left|right|inverted)
+ROTATION=$(/opt/avakiosc/venv/bin/python3 -c "import yaml; print((yaml.safe_load(open('/etc/avakiosc/config.yaml')) or {}).get('screen_rotation','normal'))" 2>/dev/null || echo normal)
+if [ "$ROTATION" != "normal" ]; then
+  OUTPUT=$(xrandr --query | awk '/ connected/{print $1; exit}')
+  [ -n "$OUTPUT" ] && xrandr --output "$OUTPUT" --rotate "$ROTATION"
+fi
 
 # Hide cursor
 unclutter -idle 0.5 -root &

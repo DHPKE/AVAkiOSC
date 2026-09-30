@@ -6,6 +6,7 @@ After=network.target
 User=kiosk
 Group=kiosk
 Environment=PATH=/opt/avakiosc/venv/bin:/usr/bin:/bin
+Environment=DISPLAY=:0
 WorkingDirectory=/opt/avakiosc/app
 ExecStart=/opt/avakiosc/venv/bin/python /opt/avakiosc/app/webadmin.py
 Restart=on-failure
