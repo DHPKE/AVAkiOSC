@@ -2,6 +2,7 @@
 """AVAkiOSC WebAdmin - HTTP admin panel for the AVAkiOSC service"""
 
 import os
+import re
 import socket
 import subprocess
 from functools import wraps
@@ -70,11 +71,44 @@ def get_xrandr_output():
     return None
 
 
+# Coordinate Transformation Matrix per rotation, so touch input stays aligned with the rotated display.
+TOUCH_MATRIX = {
+    'normal':   ('1', '0', '0', '0', '1', '0', '0', '0', '1'),
+    'left':     ('0', '-1', '1', '1', '0', '0', '0', '0', '1'),
+    'right':    ('0', '1', '0', '-1', '0', '1', '0', '0', '1'),
+    'inverted': ('-1', '0', '1', '0', '-1', '1', '0', '0', '1'),
+}
+
+
+def get_touch_device_ids():
+    ids = []
+    try:
+        out = subprocess.check_output(['xinput', 'list'], text=True, timeout=3)
+        for line in out.splitlines():
+            if 'slave  pointer' in line and 'XTEST' not in line and 'touch' in line.lower():
+                m = re.search(r'id=(\d+)', line)
+                if m:
+                    ids.append(m.group(1))
+    except Exception:
+        pass
+    return ids
+
+
+def apply_touch_rotation(rotation):
+    matrix = TOUCH_MATRIX.get(rotation, TOUCH_MATRIX['normal'])
+    for dev_id in get_touch_device_ids():
+        subprocess.run(
+            ['xinput', 'set-prop', dev_id, 'Coordinate Transformation Matrix', *matrix],
+            check=False, timeout=3
+        )
+
+
 def apply_rotation(rotation):
     output = get_xrandr_output()
     if not output:
         raise RuntimeError('No connected display output found')
     subprocess.run(['xrandr', '--output', output, '--rotate', rotation], check=True, timeout=5)
+    apply_touch_rotation(rotation)
 
 
 def require_auth(handler):

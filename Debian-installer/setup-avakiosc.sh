@@ -150,6 +150,17 @@ if [ "$ROTATION" != "normal" ]; then
   [ -n "$OUTPUT" ] && xrandr --output "$OUTPUT" --rotate "$ROTATION"
 fi
 
+# Rotate touch input to match the display rotation
+case "$ROTATION" in
+  left)     MATRIX="0 -1 1 1 0 0 0 0 1" ;;
+  right)    MATRIX="0 1 0 -1 0 1 0 0 1" ;;
+  inverted) MATRIX="-1 0 1 0 -1 1 0 0 1" ;;
+  *)        MATRIX="1 0 0 0 1 0 0 0 1" ;;
+esac
+xinput list | awk -F'id=' '/slave  pointer/ && !/XTEST/ && tolower($0) ~ /touch/ {split($2,a," "); print a[1]}' | while read -r devid; do
+  xinput set-prop "$devid" "Coordinate Transformation Matrix" $MATRIX 2>/dev/null
+done
+
 # Hide cursor
 unclutter -idle 0.5 -root &
 
