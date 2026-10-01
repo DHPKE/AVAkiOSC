@@ -20,12 +20,10 @@
     user-select: none;
   }
   #logo {
-    height: 5vw;
-    width: auto;
-    margin-bottom: 1.2vw;
-    /* force the brand-blue logo to flat white, matching the colorless screensaver style */
-    filter: brightness(0) invert(1);
-    opacity: 0.85;
+    width: 100%;
+    height: auto;
+    margin-top: 1.2vw;
+    display: block;
   }
   #clock {
     color: #ffffff;
@@ -39,8 +37,8 @@
 </head>
 <body>
 <div id="group">
-  <img id="logo" src="pke-logo.svg" alt="" onerror="this.style.display='none'">
   <div id="clock">00:00:00</div>
+  <img id="logo" src="pke-logo.svg" alt="" onerror="this.style.display='none'">
 </div>
 <script>
   function pad(n) { return n.toString().padStart(2, '0') }
@@ -49,6 +47,7 @@
     const d = new Date()
     document.getElementById('clock').textContent =
       pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds())
+    document.getElementById('logo').style.width = document.getElementById('clock').offsetWidth + 'px'
   }
 
   function moveClock() {
