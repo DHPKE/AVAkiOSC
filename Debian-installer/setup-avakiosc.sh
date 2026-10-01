@@ -36,6 +36,15 @@ DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
   build-essential xdotool x11-utils xinput onboard at-spi2-core dconf-cli xprintidle \
   unattended-upgrades
 
+# Explicitly configure NTP time sync (instead of relying on commented-out defaults)
+mkdir -p /etc/systemd/timesyncd.conf.d
+cat > /etc/systemd/timesyncd.conf.d/avakiosc.conf <<'TIMESYNC'
+[Time]
+NTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org
+FallbackNTP=pool.ntp.org
+TIMESYNC
+systemctl restart systemd-timesyncd || true
+
 # xserver-xorg-legacy provides the setuid Xorg.wrap needed so a non-logind
 # xinit session (autologin + .bash_profile) can access the VT/console.
 cat > /etc/X11/Xwrapper.config <<'XWRAP'
