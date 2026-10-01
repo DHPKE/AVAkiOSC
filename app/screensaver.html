@@ -12,20 +12,36 @@
     background: #000000;
     overflow: hidden;
   }
-  #clock {
+  #group {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+  }
+  #logo {
+    height: 5vw;
+    width: auto;
+    margin-bottom: 1.2vw;
+    /* force the brand-blue logo to flat white, matching the colorless screensaver style */
+    filter: brightness(0) invert(1);
+    opacity: 0.85;
+  }
+  #clock {
     color: #ffffff;
     font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
     font-weight: 200;
     font-size: 9vw;
     letter-spacing: 0.05em;
-    user-select: none;
     white-space: nowrap;
   }
 </style>
 </head>
 <body>
-<div id="clock">00:00:00</div>
+<div id="group">
+  <img id="logo" src="pke-logo.svg" alt="" onerror="this.style.display='none'">
+  <div id="clock">00:00:00</div>
+</div>
 <script>
   function pad(n) { return n.toString().padStart(2, '0') }
 
@@ -36,7 +52,7 @@
   }
 
   function moveClock() {
-    const el = document.getElementById('clock')
+    const el = document.getElementById('group')
     const maxX = Math.max(0, window.innerWidth - el.offsetWidth)
     const maxY = Math.max(0, window.innerHeight - el.offsetHeight)
     el.style.left = Math.round(Math.random() * maxX) + 'px'
