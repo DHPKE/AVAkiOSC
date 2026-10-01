@@ -314,6 +314,22 @@ input:focus { border-color: var(--accent2); }
   </div>
 
   <div class="card">
+    <h2>Screensaver</h2>
+    <div class="field">
+      <label>Enabled</label>
+      <select id="cfg-screensaver-enabled">
+        <option value="true">Enabled</option>
+        <option value="false">Disabled</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Idle timeout (seconds)</label>
+      <input type="number" id="cfg-screensaver-timeout" min="10" step="10">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="saveSettings()">Save &amp; restart service</button>
+  </div>
+
+  <div class="card">
     <h2>Display</h2>
     <div class="field">
       <label>Screen rotation</label>
@@ -388,6 +404,8 @@ input:focus { border-color: var(--accent2); }
       $('cfg-start-url').value  = c.start_url  || ''
       $('cfg-reset-time').value = c.reset_time != null ? c.reset_time : 3600
       $('cfg-rotation').value   = c.screen_rotation || 'normal'
+      $('cfg-screensaver-enabled').value = (c.screensaver_enabled !== false) ? 'true' : 'false'
+      $('cfg-screensaver-timeout').value = c.screensaver_timeout != null ? c.screensaver_timeout : 120
     } catch (e) { /* ignore */ }
   }
 
@@ -409,7 +427,9 @@ input:focus { border-color: var(--accent2); }
   async function saveSettings() {
     const patch = {
       start_url:  $('cfg-start-url').value.trim(),
-      reset_time: parseInt($('cfg-reset-time').value, 10) || 0
+      reset_time: parseInt($('cfg-reset-time').value, 10) || 0,
+      screensaver_enabled: $('cfg-screensaver-enabled').value === 'true',
+      screensaver_timeout: parseInt($('cfg-screensaver-timeout').value, 10) || 120
     }
     try {
       await apiFetch('POST', '/api/config', patch)
@@ -510,7 +530,7 @@ def command():
 def update_config():
     body = request.get_json(force=True, silent=True) or {}
     cfg = read_config()
-    for key in ('start_url', 'reset_time'):
+    for key in ('start_url', 'reset_time', 'screensaver_enabled', 'screensaver_timeout'):
         if key in body:
             cfg[key] = body[key]
     write_config(cfg)

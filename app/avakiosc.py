@@ -26,7 +26,8 @@ state = {
     'reset_timer': None,
     'running': True,
     'osc_server': None,
-    'udp_socket': None
+    'udp_socket': None,
+    'screensaver_active': False
 }
 
 
@@ -41,7 +42,8 @@ def read_yaml_config(path):
             'start_url': 'https://example.com', 'debug_port': 9222, 'autostart': True,
             'osc_bind': '0.0.0.0', 'osc_port': 9000, 'udp_text_bind': '0.0.0.0',
             'udp_text_port': 9100, 'reset_time': 3600, 'hmac_secret': '', 'allowed_ips': [],
-            'chrome_cmd_template': "chromium --no-first-run --disable-infobars --kiosk --start-maximized --remote-debugging-port={debug} '{url}'"
+            'chrome_cmd_template': "chromium --no-first-run --disable-infobars --kiosk --start-maximized --remote-debugging-port={debug} '{url}'",
+            'screensaver_enabled': True, 'screensaver_timeout': 120
         }
         logger.warning("Using defaults")
 
@@ -176,7 +178,8 @@ def query_status():
         'active': state['chrome_process'] is not None,
         'pid': state['chrome_process'].pid if state['chrome_process'] else None,
         'home': state['config'].get('start_url'),
-        'reset_interval': state['config'].get('reset_time')
+        'reset_interval': state['config'].get('reset_time'),
+        'screensaver_active': state['screensaver_active']
     }
 
 
@@ -194,6 +197,59 @@ def schedule_auto_reset():
         state['reset_timer'] = threading.Timer(interval, execute_reset)
         state['reset_timer'].start()
         logger.info(f"Reset timer: {interval}s")
+
+
+SCREENSAVER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'screensaver.html')
+
+
+def get_idle_seconds():
+    """Return X11 idle time in seconds via xprintidle, or None if unavailable"""
+    try:
+        out = subprocess.check_output(['xprintidle'], timeout=3)
+        return int(out.strip()) / 1000.0
+    except Exception:
+        return None
+
+
+def activate_screensaver():
+    """Show the burn-in protection screensaver"""
+    if state['screensaver_active']:
+        return
+    state['screensaver_active'] = True
+    goto_url(f'file://{SCREENSAVER_PATH}')
+    logger.info("Screensaver activated")
+
+
+def deactivate_screensaver():
+    """Return to the configured start URL after input resumes"""
+    if not state['screensaver_active']:
+        return
+    state['screensaver_active'] = False
+    goto_url(state['config'].get('start_url'))
+    logger.info("Screensaver deactivated")
+
+
+def init_screensaver_thread():
+    """Poll X11 idle time and toggle the screensaver when the configured timeout is reached"""
+    if not state['config'].get('screensaver_enabled', True):
+        return
+
+    def loop():
+        while state['running']:
+            try:
+                timeout = state['config'].get('screensaver_timeout', 120)
+                idle = get_idle_seconds()
+                if idle is not None and state['chrome_tab']:
+                    if idle >= timeout and not state['screensaver_active']:
+                        activate_screensaver()
+                    elif idle < timeout and state['screensaver_active']:
+                        deactivate_screensaver()
+            except Exception as e:
+                logger.error(f"Screensaver monitor error: {e}")
+            time.sleep(5)
+
+    threading.Thread(target=loop, daemon=True).start()
+    logger.info(f"Screensaver monitor: timeout={state['config'].get('screensaver_timeout', 120)}s")
 
 
 def dispatch_command(cmd_name, cmd_params):
@@ -304,6 +360,7 @@ def main():
     init_watchdog_thread()
     init_osc_protocol()
     init_udp_protocol()
+    init_screensaver_thread()
     
     signal.signal(signal.SIGTERM, handle_signal)
     signal.signal(signal.SIGINT, handle_signal)

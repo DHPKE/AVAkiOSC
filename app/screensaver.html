@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AVAkiOSC Screensaver</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    overflow: hidden;
+  }
+  #clock {
+    position: absolute;
+    color: #ffffff;
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 200;
+    font-size: 9vw;
+    letter-spacing: 0.05em;
+    user-select: none;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="clock">00:00:00</div>
+<script>
+  function pad(n) { return n.toString().padStart(2, '0') }
+
+  function updateClock() {
+    const d = new Date()
+    document.getElementById('clock').textContent =
+      pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds())
+  }
+
+  function moveClock() {
+    const el = document.getElementById('clock')
+    const maxX = Math.max(0, window.innerWidth - el.offsetWidth)
+    const maxY = Math.max(0, window.innerHeight - el.offsetHeight)
+    el.style.left = Math.round(Math.random() * maxX) + 'px'
+    el.style.top = Math.round(Math.random() * maxY) + 'px'
+  }
+
+  updateClock()
+  moveClock()
+  setInterval(updateClock, 1000)
+  setInterval(moveClock, 20000)
+</script>
+</body>
+</html>

@@ -33,7 +33,7 @@ apt update
 DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
   xserver-xorg xserver-xorg-legacy xinit openbox x11-xserver-utils fonts-dejavu-core unclutter \
   ca-certificates wget curl gnupg lsb-release sudo dbus-x11 python3 python3-venv \
-  build-essential xdotool x11-utils xinput onboard at-spi2-core dconf-cli \
+  build-essential xdotool x11-utils xinput onboard at-spi2-core dconf-cli xprintidle \
   unattended-upgrades
 
 # xserver-xorg-legacy provides the setuid Xorg.wrap needed so a non-logind
@@ -106,6 +106,7 @@ install -o "${SERVICE_USER}" -m 755 -d /opt/avakiosc/app
 wget -O /opt/avakiosc/app/avakiosc.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/avakiosc.py
 wget -O /opt/avakiosc/app/webadmin.py https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/webadmin.py
 wget -O /opt/avakiosc/app/pke-logo.svg https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/electron/webadmin/pke-logo.svg
+wget -O /opt/avakiosc/app/screensaver.html https://raw.githubusercontent.com/DHPKE/AVAkiOSC/main/app/screensaver.html
 
 chmod 755 /opt/avakiosc/app/avakiosc.py
 chmod 755 /opt/avakiosc/app/webadmin.py
@@ -134,6 +135,8 @@ chrome_cmd_template: "chromium --no-first-run --disable-infobars --kiosk --start
 reset_time: 3600
 screen_rotation: "normal"
 virtual_keyboard: true
+screensaver_enabled: true
+screensaver_timeout: 120
 YAML
 
 chown -R "${SERVICE_USER}:${SERVICE_USER}" /etc/avakiosc
