@@ -7,6 +7,8 @@ set -euo pipefail
 # Configurable defaults (can be overridden via env or edited after install)
 KIOSK_USER="${KIOSK_USER:-kiosk}"
 KIOSK_URL="${KIOSK_URL:-https://example.com}"
+SYSTEM_TIMEZONE="${SYSTEM_TIMEZONE:-Europe/Vienna}"
+SYSTEM_LOCALE="${SYSTEM_LOCALE:-de_AT.UTF-8}"
 OSC_BIND="${OSC_BIND:-0.0.0.0}"
 OSC_PORT="${OSC_PORT:-9000}"
 UDP_TEXT_PORT="${UDP_TEXT_PORT:-9100}"
@@ -44,6 +46,13 @@ NTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.p
 FallbackNTP=pool.ntp.org
 TIMESYNC
 systemctl restart systemd-timesyncd || true
+
+# Set timezone and locale (24h time format)
+timedatectl set-timezone "${SYSTEM_TIMEZONE}" || true
+sed -i "s/^# *${SYSTEM_LOCALE} UTF-8/${SYSTEM_LOCALE} UTF-8/" /etc/locale.gen || true
+grep -q "^${SYSTEM_LOCALE}" /etc/locale.gen || echo "${SYSTEM_LOCALE} UTF-8" >> /etc/locale.gen
+locale-gen || true
+update-locale LANG="${SYSTEM_LOCALE}" LC_TIME="${SYSTEM_LOCALE}" || true
 
 # xserver-xorg-legacy provides the setuid Xorg.wrap needed so a non-logind
 # xinit session (autologin + .bash_profile) can access the VT/console.
